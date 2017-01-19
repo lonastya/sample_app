@@ -5,11 +5,16 @@ gem 'rails', '4.2.1'
 group :development, :test do
 	gem 'sqlite3', '~>1.3','>=1.3.11'
 	gem 'rspec-rails'
+  gem 'guard-rspec'
+  gem 'spork-rails'
+  gem 'guard-spork'
+  gem "childprocess"
 end
 
 group :test do
 	gem 'selenium-webdriver'
 	gem 'capybara'
+  gem 'growl'
 end 
 
 gem 'sass-rails', '4.0.1'
