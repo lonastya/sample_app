@@ -1,19 +1,17 @@
 require 'rails_helper'
 
-describe "Static tpages" do
-
-  let(:base_title) { "Ruby on Rails Tutorial Sample App" }
+describe "Static pages", type: :request do
 
   describe "Home page" do
 
-    it "should have the content 'Sample App'" do
+    it "should have the h1 'Sample App'" do
       visit root_path
       expect(page).to have_content('Sample App')
     end
 
     it "should have the base title" do
       visit root_path
-      expect(page).to have_title("#{base_title}")
+      expect(page).to have_title("Ruby on Rails Tutorial Sample App")
     end
 
     it "should not have a custom page title" do
@@ -24,27 +22,27 @@ describe "Static tpages" do
 
   describe "Help page" do
 
-    it "should have the content 'Help'" do
+    it "should have the h1 'Help'" do
       visit help_path
       expect(page).to have_content('Help')
     end
 
     it "should have the title 'Help'" do
       visit help_path
-      expect(page).to have_title("#{base_title} | Help")
+      expect(page).to have_title("Ruby on Rails Tutorial Sample App | Help")
     end
   end
 
   describe "About page" do
 
-    it "should have the content 'About Us'" do
+    it "should have the h1 'About Us'" do
       visit about_path
       expect(page).to have_content('About Us')
     end
 
     it "should have the title 'About Us'" do
       visit about_path
-      expect(page).to have_title("#{base_title} | About Us")
+      expect(page).to have_title("Ruby on Rails Tutorial Sample App | About Us")
     end
   end
 
@@ -56,8 +54,8 @@ describe "Static tpages" do
     end
 
     it "should have the title 'Contact'" do
-      visit contact
-      expect(page).to have_title("#{base_title} | Contact")
+      visit contact_path
+      expect(page).to have_title("Ruby on Rails Tutorial Sample App | Contact")
     end
   end
 end
