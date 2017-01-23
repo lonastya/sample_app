@@ -1,7 +1,9 @@
 source 'https://rubygems.org'
 ruby '2.3.3'
+
 gem 'rails', '4.2.1'
 gem 'bootstrap-sass', '2.3.2.0'
+gem 'bcrypt'
 gem 'pry-rails'
 
 group :development, :test do
