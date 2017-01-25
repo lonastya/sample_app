@@ -20,6 +20,8 @@ group :test do
 	gem 'capybara'
   gem 'growl'
   gem 'factory_girl_rails'
+  gem 'cucumber-rails', :require => false
+  gem 'database_cleaner', github: 'bmabey/database_cleaner'
 end
 
 gem 'sass-rails', '~>4.0.2'
