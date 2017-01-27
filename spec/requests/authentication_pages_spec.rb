@@ -19,6 +19,8 @@ describe "Authentication", type: :request do
 
       it { should have_title('Sign in') }
       it { should have_error_message('Invalid') }
+      it { should_not have_link('Settings') }
+      it { should_not have_link('Profile') }
 
       describe "after visiting another page" do
         before { click_link "Home" }
@@ -47,14 +49,19 @@ describe "Authentication", type: :request do
   describe "authorization" do
 
     describe "as non-admin user" do
-      let(:user) {FactoryGirl.create(:user) }
-      let(:non_admin) {FactoryGirl.create(:user) }
+      let!(:user) {FactoryGirl.create(:user) }
+      let!(:non_admin) {FactoryGirl.create(:user) }
 
       before { sign_in non_admin, no_copybara: true }
 
       describe "submitting a DELETE request to the Users#destroy action" do
-        before { delete user_path(user) }
-        specify { expect(response).to redirect_to(root_path) }
+        #before { delete user_path(user) }
+        #specify { expect(response).to redirect_to(root_path) }
+
+        it 'should_not_delete_user' do
+          expect { delete user_path(user) }.not_to change(User, :count)
+        end
+
       end
     end
 
@@ -71,6 +78,18 @@ describe "Authentication", type: :request do
 
           it "should render the desired protected page" do
             expect(page).to have_title('Edit user')
+          end
+
+          describe "when signing in again" do
+            before do
+              delete signout_path
+              visit signin_path
+              fill_in "Email",    with: user.email
+              fill_in "Password", with: user.password
+              click_button "Sign in"
+            end
+
+           specify { expect(page).to have_title(user.name) }
           end
         end
       end
