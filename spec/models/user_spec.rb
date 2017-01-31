@@ -17,6 +17,7 @@ describe User do
   it { should respond_to(:authenticate) }
   it { should respond_to(:admin)}
   it { should respond_to(:microposts) }
+  it { should respond_to(:feed) }
 
 
   it { should be_valid }
@@ -57,6 +58,7 @@ describe User do
   end
 
   describe "when email format is valid" do
+
     it "should be valid" do
       addresses = %w[user@foo.COM A_US-ER@f.b.org frst.lst@foo.jp a+b@baz.cn]
       addresses.each do |valid_address|
@@ -67,6 +69,7 @@ describe User do
   end
 
   describe "when email address is already taken" do
+
     before do
       user_with_same_email = @user.dup
       user_with_same_email.email = @user.email.upcase
@@ -77,19 +80,24 @@ describe User do
   end
 
   describe "when password is not present" do
+
     before do
       @user = User.new(name: "Example User", email: "user@example.com",
                        password: " ", password_confirmation: " ")
     end
+
     it { should_not be_valid }
   end
 
   describe "when password doesn't match confirmation" do
+
     before { @user.password_confirmation = "mismatch" }
     it { should_not be_valid }
+
   end
 
   describe "return value of authenticate method" do
+
     before { @user.save }
     let(:found_user) { User.find_by(email: @user.email) }
 
@@ -123,5 +131,40 @@ describe User do
   describe "remember token" do
     before { @user.save }
     it { expect(@user.remember_token).not_to be_blank }
+  end
+
+  describe "micropost association" do
+
+    before { @user.save }
+    let!(:older_micropost) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
+    end
+    let!(:newer_micropost) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.hour.ago)
+    end
+
+    it "should have the right microposts in the right order" do
+      expect(@user.microposts.to_a).to eq [newer_micropost, older_micropost]
+    end
+
+    it "should destroy associated microposts" do
+      microposts = @user.microposts.to_a
+      @user.destroy
+      expect(microposts).not_to be_empty
+      microposts.each do |micropost|
+        expect(Micropost.where(id: micropost.id)).to be_empty
+      end
+    end
+
+    describe "status" do
+      let!(:unfollowed_post) do
+        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+      end
+
+      it { expect(@user.feed).to include(newer_micropost) }
+      it { expect(@user.feed).to include(older_micropost) }
+      it { expect(@user.feed).not_to include(unfollowed_post) }
+    end
+
   end
 end
