@@ -31,6 +31,23 @@ describe "Static pages", type: :request do
           expect(page).to have_selector("li##{item.id}", text: item.content)
         end
       end
+
+      it "should show the total feeds" do
+        expect(page).to have_content("micropost".pluralize(user.feed.count))
+      end
+    end
+
+    describe "pagination" do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create_list(:micropost, 40, user:user)
+        sign_in user
+        visit root_path
+      end
+
+      after(:all)  { Micropost.delete_all }
+
+      it { should have_selector('div.pagination') }
     end
   end
 

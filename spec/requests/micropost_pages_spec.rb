@@ -42,4 +42,16 @@ describe "Micropost page", type: :request do
       end
     end
   end
+
+  describe "as another user" do
+    let(:user1) { FactoryGirl.create(:user) }
+
+    before do
+      FactoryGirl.create_list(:micropost, 5, user: user1)
+      sign_in user
+      visit user_path(user1)
+    end
+
+    it { should_not have_link('delete') }
+  end
 end
